@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Folletos PDF</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-title">
+                    <img src="logo.png" alt="Logo" class="logo">
+                    <div class="title-group">
+                        <h1 class="title">Sistema de Folletos PDF</h1>
+                        <p class="subtitle">Explora y descarga los folletos digitales de NEXTGEN</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-stats">
+                <span id="total-count">0 folletos</span>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Navegación</h3>
+                    <ul class="nav-menu">
+                        <li class="nav-item active"><a href="#"><span>📁</span> Inicio</a></li>
+                        <li class="nav-item"><a href="#"><span>🖼️</span> Galería</a></li>
+                        <li class="nav-item"><a href="#"><span>🌐</span> Redes Sociales</a></li>
+                        <li class="nav-item"><a href="#"><span>📸</span> Galería de Fotos</a></li>
+                        <li class="nav-item"><a href="#"><span>🏙️</span> Fotos CDMX</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="toolbar">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <input type="text" id="search-input" placeholder="Buscar folletos por nombre...">
+                            <button id="clear-search" class="clear-search-btn" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                                </svg>
+                            </button>
+                            <button id="search-btn" class="search-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="toolbar-controls">
+                        
+                        <select id="sort-select" class="filter-select">
+                            <option value="name-asc">Ordenar por nombre (A-Z)</option>
+                            <option value="name-desc">Ordenar por nombre (Z-A)</option>
+                            <option value="date-new">Más recientes primero</option>
+                            <option value="date-old">Más antiguos primero</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button id="grid-view" class="view-btn active" data-view="grid">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+                                </svg>
+                            </button>
+                            <button id="list-view" class="view-btn" data-view="list">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div class="pdf-container" id="pdf-container">
+                        <div class="pdf-grid" id="pdf-grid">
+                            <!-- Los folletos se cargarán aquí dinámicamente -->
+                        </div>
+
+                        <div class="pdf-list" id="pdf-list" style="display: none;">
+                            <!-- Vista de lista se cargará aquí -->
+                        </div>
+
+                        <div class="no-results" id="no-results" style="display: none;">
+                            <div class="no-results-icon">🔍</div>
+                            <h3>No se encontraron folletos</h3>
+                            <p>No hay folletos que coincidan con tu búsqueda. Intenta con otros términos.</p>
+                        </div>
+                    </div>
+
+                    <div class="pdf-preview" id="pdf-preview">
+                        <div class="preview-placeholder" id="preview-placeholder">
+                            <div class="placeholder-icon">📄</div>
+                            <h3>Vista previa del folleto</h3>
+                            <p>Selecciona un folleto para ver la vista previa</p>
+                        </div>
+                        <div class="preview-content" id="preview-content" style="display: none;">
+                            <div class="preview-header">
+                                <h3 id="preview-title">Título del Folleto</h3>
+                                <button id="preview-download" class="preview-download-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    </svg>
+                                    Descargar
+                                </button>
+                            </div>
+                            <div class="preview-viewer">
+                                <canvas id="preview-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal del visor de PDF -->
+    <div class="modal-overlay" id="pdf-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modal-title">Título del Folleto</h2>
+                <div class="modal-controls">
+                    <button id="modal-download" class="control-btn download-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        Descargar
+                    </button>
+                    <button id="modal-close" class="control-btn close-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                        </svg>
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <div class="pdf-viewer">
+                    <div class="pdf-controls">
+                        <button id="prev-page" class="page-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                            Anterior
+                        </button>
+                        <span id="page-num">Página 1 de 1</span>
+                        <button id="next-page" class="page-btn">
+                            Siguiente
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="pdf-canvas-container">
+                        <canvas id="pdf-canvas"></canvas>
+                    </div>
+                    <div class="pdf-controls-bottom">
+                        <div class="zoom-controls">
+                            <button id="zoom-out" class="zoom-btn">-</button>
+                            <span id="zoom-level">100%</span>
+                            <button id="zoom-in" class="zoom-btn">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="payment.js"></script>
+</body>
+</html>
